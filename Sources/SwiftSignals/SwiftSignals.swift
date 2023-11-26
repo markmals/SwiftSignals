@@ -1,0 +1,82 @@
+import Foundation
+import Observation
+
+@Observable
+final class Signal<T> {
+    var wrappedValue: T
+    init(wrappedValue: T) {
+        self.wrappedValue = wrappedValue
+    }
+}
+
+public func createSignal<T: Equatable>(_ initialValue: T) -> (() -> T, (T) -> Void) {
+    let signal = Signal(wrappedValue: initialValue)
+    return (
+        { return signal.wrappedValue },
+        { newValue in
+            if signal.wrappedValue != newValue {
+                signal.wrappedValue = newValue
+            }
+        }
+    )
+}
+
+public func createEffect(_ apply: @escaping () -> Void) {
+    @Sendable func effect() {
+        withObservationTracking {
+            apply()
+        } onChange: {
+            // FIXME: Neither of these methods for circumventing the `willSet` semantics
+            // of `withObservationTracking` are completely reliable
+            
+            DispatchQueue.main.async {
+                effect()
+            }
+            
+//            Task { @MainActor in
+//                effect()
+//            }
+        }
+    }
+    
+    effect()
+}
+
+enum Initializable<T> {
+    case initialized(T)
+    case uninitialized
+    
+    var value: T {
+        switch self {
+        case .initialized(let value): return value
+        case .uninitialized: fatalError("Memoized function accessed before initialization")
+        }
+    }
+}
+
+public func createMemo<T: Equatable>(_ computation: @autoclosure @escaping () -> T) -> () -> T {
+    let signal = Signal<Initializable<T>>(wrappedValue: .uninitialized)
+    
+    @Sendable func effect() {
+        let result = withObservationTracking {
+            return computation()
+        } onChange: {
+            DispatchQueue.main.async {
+                effect()
+            }
+        }
+
+        guard case .initialized(_) = signal.wrappedValue else {
+            signal.wrappedValue = .initialized(result)
+            return
+        }
+        
+        if result != signal.wrappedValue.value {
+            signal.wrappedValue = .initialized(result)
+        }
+    }
+    
+    effect()
+    
+    return { return signal.wrappedValue.value }
+}
