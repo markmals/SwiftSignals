@@ -9,10 +9,13 @@ final class Signal<T> {
     }
 }
 
-public func createSignal<T: Equatable>(_ initialValue: T) -> (() -> T, (T) -> Void) {
+public typealias Accessor<T> = () -> T
+public typealias Setter<T> = (T) -> Void
+
+public func createSignal<T: Equatable>(_ initialValue: T) -> (Accessor<T>, Setter<T>) {
     let signal = Signal(wrappedValue: initialValue)
     return (
-        { return signal.wrappedValue },
+        { signal.wrappedValue },
         { newValue in
             if signal.wrappedValue != newValue {
                 signal.wrappedValue = newValue
@@ -54,7 +57,7 @@ enum Initializable<T> {
     }
 }
 
-public func createMemo<T: Equatable>(_ computation: @autoclosure @escaping () -> T) -> () -> T {
+public func createMemo<T: Equatable>(_ computation: @autoclosure @escaping Accessor<T>) -> Accessor<T> {
     let signal = Signal<Initializable<T>>(wrappedValue: .uninitialized)
     
     @Sendable func effect() {
@@ -78,5 +81,5 @@ public func createMemo<T: Equatable>(_ computation: @autoclosure @escaping () ->
     
     effect()
     
-    return { return signal.wrappedValue.value }
+    return { signal.wrappedValue.value }
 }
