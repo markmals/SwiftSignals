@@ -1,8 +1,21 @@
+//@propertyWrapper
+//struct Derived<Wrapped: Equatable> {
+//    var value: () -> Wrapped
 //
-//  File.swift
-//  
+//    var wrappedValue: Wrapped {
+//        get { value() }
+//    }
 //
-//  Created by Mark Malstrom on 2024.06.04.
+//    init(wrappedValue: @escaping @autoclosure () -> Wrapped) {
+//        self.value = wrappedValue
+//    }
+//}
 //
-
-import Foundation
+//@propertyWrapper
+//struct State<Wrapped: Equatable> {
+//    var wrappedValue: Wrapped
+//
+//    init(wrappedValue: Wrapped) {
+//        self.wrappedValue = wrappedValue
+//    }
+//}

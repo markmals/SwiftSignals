@@ -1,35 +1,36 @@
-import SwiftSignal
-import XCTest
+import Testing
+import AngularSignals
 
-final class SignalTests: XCTestCase {
-    // should be a getter which reflects the set value
-    func testGetterSetter() {
+@Suite
+struct SignalTests {
+    @Test("Should be a getter which reflects the set value")
+    func getterSetter() {
         let state = signal(false)
-        XCTAssertFalse(state())
+        #expect(state() == false)
         state.set(true)
-        XCTAssertTrue(state())
+        #expect(state() == true)
     }
 
-    // should accept update method to set a new value based on the previous one
-    func testUpdate() {
+    @Test("Should accept update method to set a new value based on the previous one")
+    func update() {
         let counter = signal(1)
-        XCTAssertEqual(counter(), 1)
+        #expect(counter() == 1)
 
         counter.update { $0 + 1 }
-        XCTAssertEqual(counter(), 2)
+        #expect(counter() == 2)
     }
 
-    // should have mutate method for mutable, out of bound updates
-    func testMutate() {
+    @Test("Should have mutate method for mutable, out of bound updates")
+    func mutate() {
         let state = signal(["a"])
-        XCTAssertEqual(state(), ["a"])
+        #expect(state() == ["a"])
 
         state.mutate { $0.append("b") }
-        XCTAssertEqual(state(), ["a", "b"])
+        #expect(state() == ["a", "b"])
     }
 
-    // should not propagate change when the new signal value is equal to the previous one
-    func testEquality() {
+    @Test("Should not propagate change when the new signal value is equal to the previous one")
+    func equality() {
         struct StringCount: Equatable {
             let string: String
             init(_ string: String) {
@@ -47,13 +48,13 @@ final class SignalTests: XCTestCase {
         // there should be no change in the signal's value as the new value is determined to be equal
         // to the previous one
         state.set(StringCount("bbb"))
-        XCTAssertEqual(state().string.uppercased(), "AAA")
+        #expect(state().string.uppercased() == "AAA")
 
         state.update { _ in StringCount("ccc") }
-        XCTAssertEqual(state().string.uppercased(), "AAA")
+        #expect(state().string.uppercased() == "AAA")
 
         // setting a "non-equal" value
         state.set(StringCount("d"))
-        XCTAssertEqual(state().string.uppercased(), "D")
+        #expect(state().string.uppercased() == "D")
     }
 }

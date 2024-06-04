@@ -1,23 +1,40 @@
 // swift-tools-version: 5.10
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "SwiftSignals",
+    platforms: [.iOS(.v17), .macCatalyst(.v17), .macOS(.v14), .watchOS(.v10), .tvOS(.v17), .visionOS(.v1)],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "SwiftSignals",
-            targets: ["SwiftSignals"]),
+        .library(name: "AngularSignals", targets: ["AngularSignals"]),
+        .library(name: "ObservableSignals", targets: ["ObservableSignals"]),
+        .library(name: "ReactivelySignals", targets: ["ReactivelySignals"]),
+//        .library(name: "LeptosSignals", targets: ["LeptosSignals"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-testing.git", from: "0.9.0")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "SwiftSignals"),
-        .testTarget(
-            name: "SwiftSignalsTests",
-            dependencies: ["SwiftSignals"]),
+        .target(name: "AngularSignals"),
+        .target(name: "ObservableSignals"),
+        .target(name: "ReactivelySignals"),
+//        .target(name: "LeptosSignals"),
+        
+        .testTarget(name: "AngularSignalsTests", dependencies: [
+            "AngularSignals",
+            .product(name: "Testing", package: "swift-testing"),
+        ]),
+        .testTarget(name: "ObservableSignalsTests", dependencies: [
+            "ObservableSignals",
+            .product(name: "Testing", package: "swift-testing"),
+        ]),
+        .testTarget(name: "ReactivelySignalsTests", dependencies: [
+            "ReactivelySignals",
+            .product(name: "Testing", package: "swift-testing"),
+        ]),
+//        .testTarget(name: "LeptosSignalsTests", dependencies: [
+//            "LeptosSignals",
+//            .product(name: "Testing", package: "swift-testing"),
+//        ]),
     ]
 )

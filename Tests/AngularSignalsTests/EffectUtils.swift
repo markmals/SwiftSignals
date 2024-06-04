@@ -1,4 +1,4 @@
-@testable import SwiftSignal
+@testable import AngularSignals
 
 var queue = Set<Watch>()
 

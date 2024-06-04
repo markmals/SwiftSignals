@@ -147,7 +147,7 @@ internal class ThrowingComputedSignal<Value: Equatable>: ReactiveNode, ThrowingS
     }
 }
 
-internal class ComputedSignal<Value: Equatable>: ThrowingComputedSignal<Value>, Signal {
+internal final class ComputedSignal<Value: Equatable>: ThrowingComputedSignal<Value>, Signal {
     public typealias T = Value
 
     override public func callAsFunction() -> T {

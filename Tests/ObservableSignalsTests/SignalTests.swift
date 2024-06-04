@@ -1,18 +1,18 @@
-import SwiftSignals
+import ObservableSignals
 import Testing
 
 @Suite
 struct SignalTests {
-    // should be a getter which reflects the set value
-    @Test func getterSetter() {
+    @Test("Should be a getter which reflects the set value")
+    func getterSetter() {
         let (state, setState) = createSignal(false)
         #expect(state() == false)
         setState(true)
         #expect(state() == true)
     }
     
-    // should not propagate change when the new signal value is equal to the previous one
-    @Test func equality() {
+    @Test("Should not propagate change when the new signal value is equal to the previous one")
+    func equality() {
         struct StringCount: Equatable {
             let string: String
             

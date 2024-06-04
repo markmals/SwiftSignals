@@ -1,9 +1,10 @@
-import SwiftSignals
+import ObservableSignals
 import Testing
 
 @Suite
 struct MemoTests {
-    @Test func createMemoizedSignal() {
+    @Test("Should create a memoized signal")
+    func createMemoizedSignal() {
         let (counter, setCounter) = createSignal(0)
         var computedRunCount = 0
         
@@ -25,8 +26,8 @@ struct MemoTests {
         #expect(double() == "4:3")
     }
     
-    // should not re-compute if there are no dependencies
-    @Test func shouldNotRecompute() {
+    @Test("Should not re-compute if there are no dependencies")
+    func dontRecompute() {
         var tick = 0
         
         let computation = {
@@ -40,8 +41,8 @@ struct MemoTests {
         #expect(memo() == 1)
     }
 
-    // should not re-compute if the dependency is a primitive value and the value did not change
-    @Test func shouldNotRecomputeIfValueDidNotChange() {
+    @Test("Should not re-compute if the dependency is a primitive value and the value did not change")
+    func dontRecomputeIfNoChange() {
         let (counter, setCounter) = createSignal(0)
 
         var computedRunCount = 0
@@ -59,7 +60,8 @@ struct MemoTests {
     }
     
     // FIXME: This test fails without the Task.sleep in between the set and #expect
-    @Test func shouldChainComputed() {
+    @Test("Should chain computed values")
+    func chainComputed() {
         let (name, setName) = createSignal("abc")
         let reverse = createMemo(String(name().reversed()))
         let upper = createMemo(reverse().uppercased())
@@ -70,8 +72,8 @@ struct MemoTests {
         #expect(upper() == "OOF")
     }
     
-    // should evaluate computed only when subscribing
-    @Test func shouldEvaluateOnlyWhenSubscribing() {
+    @Test("Should evaluate computed only when subscribing")
+    func evaluateOnlyWhenSubscribing() {
         let (name, setName) = createSignal("John")
         let (show, setShow) = createSignal(true)
 

@@ -1,9 +1,10 @@
-@testable import SwiftSignal
-import XCTest
+import Testing
+import AngularSignals
 
-final class GlitchFreeTests: XCTestCase {
-    // should recompute only once for diamond dependency graph
-    func testShouldRecomputeOnluOnceForDiamondDependencies() {
+@Suite
+struct GlitchFreeTests {
+    @Test("Should recompute only once for diamond dependency graph")
+    func recomputeOnlyOnceForDiamondDependencies() {
         var fullRecompute = 0
 
         let name = signal("John Doe")
@@ -14,16 +15,16 @@ final class GlitchFreeTests: XCTestCase {
             return "\(first())/\(last())"
         }
 
-        XCTAssertEqual(full(), "John/Doe")
-        XCTAssertEqual(fullRecompute, 1)
+        #expect(full() == "John/Doe")
+        #expect(fullRecompute == 1)
 
         name.set("Bob Fisher")
-        XCTAssertEqual(full(), "Bob/Fisher")
-        XCTAssertEqual(fullRecompute, 2)
+        #expect(full() == "Bob/Fisher")
+        #expect(fullRecompute == 2)
     }
 
-    // should recompute only once
-    func testShouldRecomputeOnlyOnce() {
+    @Test("Should recompute only once")
+    func recomputeOnlyOnce() {
         let a = signal("a")
         let b = computed { a() + "b" }
         var cRecompute = 0
@@ -32,9 +33,9 @@ final class GlitchFreeTests: XCTestCase {
             return "\(a())|\(b())|\(cRecompute)"
         }
 
-        XCTAssertEqual(c(), "a|ab|1")
+        #expect(c() == "a|ab|1")
 
         a.set("A")
-        XCTAssertEqual(c(), "A|Ab|2")
+        #expect(c() == "A|Ab|2")
     }
 }

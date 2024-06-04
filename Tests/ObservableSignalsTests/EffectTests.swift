@@ -1,10 +1,10 @@
-import SwiftSignals
+import ObservableSignals
 import Testing
 
 @Suite
 struct EffectTests {
-    // should create and run once, even without dependencies
-    @Test func shouldCreateAndRunOnce() {
+    @Test("Should create and run once, even without dependencies")
+    func createAndRunOnce() {
         var runs = 0
 
         createEffect {
@@ -14,8 +14,8 @@ struct EffectTests {
         #expect(runs == 1)
     }
     
-    // should schedule on dependencies (signal) change
-    @Test func shouldScheduleOnDependenciesChange() {
+    @Test("Should schedule on dependencies (signal) change")
+    func scheduleOnDependenciesChange() {
         let (count, setCount) = createSignal(0)
         var runLog: [Int] = []
         
